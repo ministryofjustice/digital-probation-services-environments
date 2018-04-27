@@ -9,7 +9,9 @@ I strongly recommend making multiple small changes and checking what terraform i
 
 1. Pull this repo
 2. Navigate to the terraform directory
-3. run terraform init
-4. run terraform plan
+3. Run ```terraform init```
+4. Run ```terraform plan -out=./terraform.plan```. The -out option is to ensure that apply runs the generated plan.
 5. Examine the plan. If it is not what you expect, stop!
-6. run terraform apply
+6. Run ```terraform apply "./terraform.plan"```
+
+You may find it convenient to add the commands above as run configurations in IntelliJ, with the working directory set to terraform.
