@@ -3,7 +3,7 @@ Infrastructure-as-code provisioning of environments in AWS for new technology nD
 
 ### How to use this repo
 IaC repos are not like like normal code repos - when you use them you are modifiying the single instance of a piece of infrastructure. 
-There are no unit tests as such, though we will add awspec tests to verify that the infrastructure is in its expected state.
+There are no unit tests as such - it is possible to add awspec tests to verify that the infrastructure is in its expected state, but the benefit is marginal at best.
 Similarly, the use of branches does not isolate your changes from other branches. 
 I strongly recommend making multiple small changes and checking what terraform is going to do (see below) before letting it do it.
 
@@ -15,3 +15,7 @@ I strongly recommend making multiple small changes and checking what terraform i
 6. Run ```terraform apply "./terraform.plan"```
 
 You may find it convenient to add the commands above as run configurations in IntelliJ, with the working directory set to terraform.
+
+### Resource identification
+All taggable resources should be identified with the stardard tag set described [here](https://github.com/ministryofjustice/technical-guidance/blob/master/standards/documenting-infrastructure-owners.md).
+Use the tags module and merge the resource name.
