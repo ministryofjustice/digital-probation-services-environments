@@ -32,3 +32,14 @@ module "dev_offender_api" {
     "${module.networks.application_public_application_subnet_2_id}"
   ]
 }
+
+# Dev environment for VCMS
+
+module "vcms-dev" {
+  source     = "modules/environment_templates/vcms-devtest"
+  vpc_id     = "${module.networks.vpc_id}"
+  eb_subnets = [
+    "${module.networks.application_public_application_subnet_1_id}",
+    "${module.networks.application_public_application_subnet_2_id}"
+  ]
+}
