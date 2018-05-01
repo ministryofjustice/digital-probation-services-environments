@@ -14,12 +14,21 @@ provider "aws" {
   version = "~> 1.16"
 }
 
-module "tags" {
-  source  = "modules/tags"
+# Networking
+
+module "networks" {
+  source = "modules/networks"
 }
 
-resource "aws_vpc" "digital-probation-services" {
-  cidr_block       = "10.0.0.0/16"
+# S3 bucket for application version files
 
-  tags = "${merge(module.tags.tags, map("Name", "Digital Probation Services"))}"
+# Dev environment for the Delius Offender API
+
+module "dev_offender_api" {
+  source     = "modules/environment_templates/delius-offender-api-devtest"
+  vpc_id     = "${module.networks.vpc_id}"
+  eb_subnets = [
+    "${module.networks.application_public_application_subnet_1_id}",
+    "${module.networks.application_public_application_subnet_2_id}"
+  ]
 }
