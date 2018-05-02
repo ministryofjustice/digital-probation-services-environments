@@ -1,17 +1,17 @@
 # Symbolic constants
 
-output "application_name" {
-  value = "ndelius"
-}
-
 output "environment_name" {
   value = "ndelius-stage"
 }
 
-output "az_1" {
+output "az_a" {
+  value = "eu-west-2a"
+}
+
+output "az_b" {
   value = "eu-west-2b"
 }
 
-output "az_2" {
+output "az_c" {
   value = "eu-west-2c"
 }
