@@ -54,9 +54,7 @@ hs_err_pid*
 
 /digital-probation-services-environments.iml
 
-# Terraform plan
-terraform/terraform.plan
+# Terraform
+**/terraform.plan
+**/.terraform
 
-# Unversioned files
-src/
-terraform/.terraform/

@@ -3,9 +3,9 @@
 output "tags" {
   value = {
     owner = "Digital Studio",
-    environment-name = "N/A",
-    application = "Digital Probation Services"
-    is-production = "N/A",
+    environment-name = "vcms-stage",
+    application = "VCMS"
+    is-production = "false",
     business-unit = "HMPPS",
     infrastructure-support = "Digital Studio"
   }
