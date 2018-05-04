@@ -58,7 +58,7 @@ resource "aws_elastic_beanstalk_application_version" "latest" {
   name        = "latest"
   application = "${var.application_name}"
   description = "Version latest of app ${var.application_name}"
-  bucket      = "digital-probation-services-applications"
+  bucket      = "hmpps-probation-artefacts"
   key         = "vcms.zip"
   count = 0
 }

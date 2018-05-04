@@ -2,7 +2,7 @@
 
 terraform {
   backend "s3" {
-    bucket = "digital-probation-services-terraform"
+    bucket = "hmpps-probation-terraform"
     key    = "ndelius.stage.terraform.tfstate"
     region = "eu-west-2"
   }
