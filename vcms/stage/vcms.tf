@@ -8,6 +8,10 @@ variable "eb_environment_name" {
   default = "vcms-stage"
 }
 
+variable "db_name" {
+  default = "vcmsstage"
+}
+
 # Security groups
 
 resource "aws_security_group" "elb" {
@@ -63,6 +67,25 @@ resource "aws_security_group" "ec2" {
   }
 
   tags = "${merge(module.tags.tags, map("Name", "${var.application_name}_ec2"))}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_security_group" "db" {
+  name        = "${var.application_name}-db"
+  vpc_id      = "${aws_vpc.vpc.id}"
+  description = "RDS instances"
+
+  ingress {
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
+    security_groups = ["${aws_security_group.ec2.id}"]
+  }
+
+  tags = "${merge(module.tags.tags, map("Name", "${var.application_name}_db"))}"
 
   lifecycle {
     create_before_destroy = true
@@ -142,3 +165,25 @@ resource "aws_elastic_beanstalk_application_version" "latest" {
   key         = "vcms.zip"
   count = 0
 }
+
+# Database
+
+data "aws_ssm_parameter" "mariadb-root-password" {
+  name  = "${var.eb_environment_name}-mariadb-root-password"
+}
+
+resource "aws_db_instance" "default" {
+  allocated_storage    = 20
+  storage_type         = "gp2"
+  engine               = "mariadb"
+  engine_version       = "10.1.31"
+  instance_class       = "db.t2.micro"
+  name                 = "${var.db_name}"
+  identifier           = "${var.eb_environment_name}"
+  username             = "vcms"
+  password             = "${data.aws_ssm_parameter.mariadb-root-password.value}"
+  parameter_group_name = "default.mariadb10.1"
+  db_subnet_group_name = "${aws_db_subnet_group.default.name}"
+  vpc_security_group_ids = ["${aws_security_group.db.id}"]
+}
+

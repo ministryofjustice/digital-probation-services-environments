@@ -104,3 +104,43 @@ resource "aws_route_table_association" "private_b" {
   route_table_id = "${aws_route_table.private_b.id}"
 }
 
+resource "aws_subnet" "db_a" {
+  vpc_id            = "${aws_vpc.vpc.id}"
+  cidr_block        = "${cidrsubnet(aws_vpc.vpc.cidr_block, 4, 4)}"
+  availability_zone = "${module.constants.az_a}"
+  tags              = "${merge(module.tags.tags, map("Name", "${module.constants.environment_name}_db_a"))}"
+}
+
+resource "aws_route_table" "db_a" {
+  vpc_id            = "${aws_vpc.vpc.id}"
+  tags              = "${merge(module.tags.tags, map("Name", "${module.constants.environment_name}_db_a"))}"
+}
+
+resource "aws_route_table_association" "db_a" {
+  subnet_id      = "${aws_subnet.db_a.id}"
+  route_table_id = "${aws_route_table.db_a.id}"
+}
+
+resource "aws_subnet" "db_b" {
+  vpc_id            = "${aws_vpc.vpc.id}"
+  cidr_block        = "${cidrsubnet(aws_vpc.vpc.cidr_block, 4, 5)}"
+  availability_zone = "${module.constants.az_b}"
+  tags              = "${merge(module.tags.tags, map("Name", "${module.constants.environment_name}_db_b"))}"
+}
+
+resource "aws_route_table" "db_b" {
+  vpc_id            = "${aws_vpc.vpc.id}"
+  tags              = "${merge(module.tags.tags, map("Name", "${module.constants.environment_name}_db_b"))}"
+}
+
+resource "aws_route_table_association" "db_b" {
+  subnet_id      = "${aws_subnet.db_b.id}"
+  route_table_id = "${aws_route_table.db_b.id}"
+}
+
+resource "aws_db_subnet_group" "default" {
+  name          = "${module.constants.environment_name}"
+  subnet_ids    = ["${aws_subnet.db_a.id}", "${aws_subnet.db_b.id}"]
+  tags          = "${merge(module.tags.tags, map("Name", "DB subnet group"))}"
+}
+
