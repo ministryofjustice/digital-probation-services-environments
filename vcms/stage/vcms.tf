@@ -12,6 +12,10 @@ variable "db_name" {
   default = "vcmsstage"
 }
 
+variable "db_root_user_name" {
+  default = "vcms"
+}
+
 # Security groups
 
 resource "aws_security_group" "elb" {
@@ -154,6 +158,35 @@ resource "aws_elastic_beanstalk_environment" "eb_environment" {
     name      = "SecurityGroups"
     value     = "${aws_security_group.elb.id}"
   }
+
+  # Application settings
+
+  setting {
+    namespace = "aws:elasticbeanstalk:container:php:phpini"
+    name      = "document_root"
+    value     = "/public"
+  }
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "DB_DATABASE"
+    value     = "${var.db_name}"
+  }
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "DB_HOST"
+    value     = "${aws_db_instance.default.endpoint}"
+  }
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "DB_USERNAME"
+    value     = "${var.db_root_user_name}"
+  }
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "DB_PASSWORD"
+    value     = "${data.aws_ssm_parameter.mariadb-root-password.value}"
+  }
+
   tags        = "${module.tags.tags}"
 }
 
@@ -163,7 +196,6 @@ resource "aws_elastic_beanstalk_application_version" "latest" {
   description = "Version latest of app ${var.application_name}"
   bucket      = "hmpps-probation-artefacts"
   key         = "vcms.zip"
-  count = 0
 }
 
 # Database
@@ -180,7 +212,7 @@ resource "aws_db_instance" "default" {
   instance_class       = "db.t2.micro"
   name                 = "${var.db_name}"
   identifier           = "${var.eb_environment_name}"
-  username             = "vcms"
+  username             = "${var.db_root_user_name}"
   password             = "${data.aws_ssm_parameter.mariadb-root-password.value}"
   parameter_group_name = "default.mariadb10.1"
   db_subnet_group_name = "${aws_db_subnet_group.default.name}"

@@ -58,3 +58,7 @@ hs_err_pid*
 **/terraform.plan
 **/.terraform
 
+# Elastic Beanstalk Files
+.elasticbeanstalk/
+
+vcms/prod/
