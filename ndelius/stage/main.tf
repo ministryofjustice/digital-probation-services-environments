@@ -14,11 +14,26 @@ provider "aws" {
   version = "~> 1.16"
 }
 
-module "tags" {
-  source = "modules/tags"
+locals { # Environment
+  environment_name = "ndelius-stage"
 }
 
-module "constants" {
-  source = "modules/constants"
+# Network
+locals {
+  az_a = "eu-west-2a"
+  az_b = "eu-west-2b"
+  az_c = "eu-west-2c"
+}
+
+# Tags
+locals {
+  tags = {
+    owner = "Digital Studio",
+    environment-name = "ndelius-stage",
+    application = "nDelius"
+    is-production = "false",
+    business-unit = "HMPPS",
+    infrastructure-support = "Digital Studio"
+  }
 }
 

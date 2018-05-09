@@ -2,12 +2,12 @@
 
 resource "aws_vpc" "vpc" {
   cidr_block = "192.168.0.0/24"
-  tags       = "${merge(module.tags.tags, map("Name", "${module.constants.environment_name}"))}"
+  tags       = "${merge(local.tags, map("Name", "${local.environment_name}"))}"
 }
 
 resource "aws_internet_gateway" "main" {
   vpc_id            = "${aws_vpc.vpc.id}"
-  tags              = "${merge(module.tags.tags, map("Name", "${module.constants.environment_name}"))}"
+  tags              = "${merge(local.tags, map("Name", "${local.environment_name}"))}"
 }
 
 resource "aws_eip" "nat" {
@@ -15,16 +15,17 @@ resource "aws_eip" "nat" {
 }
 
 resource "aws_nat_gateway" "gw" {
-  allocation_id = "${aws_eip.nat.id}"
-  subnet_id     = "${aws_subnet.public_a.id}"
-  depends_on    = ["aws_internet_gateway.main"]
+  allocation_id     = "${aws_eip.nat.id}"
+  subnet_id         = "${aws_subnet.public_a.id}"
+  depends_on        = ["aws_internet_gateway.main"]
+  tags              = "${merge(local.tags, map("Name", "${local.environment_name}"))}"
 }
 
 resource "aws_subnet" "public_a" {
   vpc_id            = "${aws_vpc.vpc.id}"
   cidr_block        = "${cidrsubnet(aws_vpc.vpc.cidr_block, 4, 0)}"
-  availability_zone = "${module.constants.az_a}"
-  tags              = "${merge(module.tags.tags, map("Name", "${module.constants.environment_name}_public_a"))}"
+  availability_zone = "${local.az_a}"
+  tags              = "${merge(local.tags, map("Name", "${local.environment_name}_public_a"))}"
 }
 
 resource "aws_route_table" "public_a" {
@@ -33,7 +34,7 @@ resource "aws_route_table" "public_a" {
     cidr_block      = "0.0.0.0/0"
     gateway_id      = "${aws_internet_gateway.main.id}"
   }
-  tags              = "${merge(module.tags.tags, map("Name", "${module.constants.environment_name}_public_a"))}"
+  tags              = "${merge(local.tags, map("Name", "${local.environment_name}_public_a"))}"
 }
 
 resource "aws_route_table_association" "public_a" {
@@ -44,8 +45,8 @@ resource "aws_route_table_association" "public_a" {
 resource "aws_subnet" "public_b" {
   vpc_id            = "${aws_vpc.vpc.id}"
   cidr_block        = "${cidrsubnet(aws_vpc.vpc.cidr_block, 4, 1)}"
-  availability_zone = "${module.constants.az_b}"
-  tags              = "${merge(module.tags.tags, map("Name", "${module.constants.environment_name}_public_b"))}"
+  availability_zone = "${local.az_b}"
+  tags              = "${merge(local.tags, map("Name", "${local.environment_name}_public_b"))}"
 }
 
 resource "aws_route_table" "public_b" {
@@ -54,7 +55,7 @@ resource "aws_route_table" "public_b" {
     cidr_block      = "0.0.0.0/0"
     gateway_id      = "${aws_internet_gateway.main.id}"
   }
-  tags              = "${merge(module.tags.tags, map("Name", "${module.constants.environment_name}_public_b"))}"
+  tags              = "${merge(local.tags, map("Name", "${local.environment_name}_public_b"))}"
 }
 
 resource "aws_route_table_association" "public_b" {
@@ -65,13 +66,13 @@ resource "aws_route_table_association" "public_b" {
 resource "aws_subnet" "private_a" {
   vpc_id            = "${aws_vpc.vpc.id}"
   cidr_block        = "${cidrsubnet(aws_vpc.vpc.cidr_block, 4, 2)}"
-  availability_zone = "${module.constants.az_a}"
-  tags              = "${merge(module.tags.tags, map("Name", "${module.constants.environment_name}_private_a"))}"
+  availability_zone = "${local.az_a}"
+  tags              = "${merge(local.tags, map("Name", "${local.environment_name}_private_a"))}"
 }
 
 resource "aws_route_table" "private_a" {
   vpc_id            = "${aws_vpc.vpc.id}"
-  tags              = "${merge(module.tags.tags, map("Name", "${module.constants.environment_name}_private_a"))}"
+  tags              = "${merge(local.tags, map("Name", "${local.environment_name}_private_a"))}"
   route {
     cidr_block     = "0.0.0.0/0"
     nat_gateway_id = "${aws_nat_gateway.gw.id}"
@@ -86,13 +87,13 @@ resource "aws_route_table_association" "private_a" {
 resource "aws_subnet" "private_b" {
   vpc_id            = "${aws_vpc.vpc.id}"
   cidr_block        = "${cidrsubnet(aws_vpc.vpc.cidr_block, 4, 3)}"
-  availability_zone = "${module.constants.az_b}"
-  tags              = "${merge(module.tags.tags, map("Name", "${module.constants.environment_name}_private_b"))}"
+  availability_zone = "${local.az_b}"
+  tags              = "${merge(local.tags, map("Name", "${local.environment_name}_private_b"))}"
 }
 
 resource "aws_route_table" "private_b" {
   vpc_id            = "${aws_vpc.vpc.id}"
-  tags              = "${merge(module.tags.tags, map("Name", "${module.constants.environment_name}_private_b"))}"
+  tags              = "${merge(local.tags, map("Name", "${local.environment_name}_private_b"))}"
   route {
     cidr_block     = "0.0.0.0/0"
     nat_gateway_id = "${aws_nat_gateway.gw.id}"

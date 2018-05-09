@@ -1,17 +1,15 @@
 # Hello world sample application in the nDelius stage environment
 
-variable "application_name" {
-  default = "ndelius-helloworld"
-}
-
-variable "eb_environment_name" {
-  default = "ndelius-helloworld-stage"
+# Elastic beanstalk
+locals {
+  helloworld_application_name = "ndelius-helloworld"
+  helloworld_eb_environment_name = "ndelius-helloworld-stage"
 }
 
 # Security groups
 
 resource "aws_security_group" "elb" {
-  name        = "${var.application_name}-elb"
+  name        = "${local.helloworld_application_name}-elb"
   vpc_id      = "${aws_vpc.vpc.id}"
   description = "ELB"
 
@@ -36,7 +34,7 @@ resource "aws_security_group" "elb" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = "${merge(module.tags.tags, map("Name", "${var.application_name}_elb"))}"
+  tags = "${merge(local.tags, map("Name", "${local.helloworld_application_name}_elb"))}"
 
   lifecycle {
     create_before_destroy = true
@@ -44,7 +42,7 @@ resource "aws_security_group" "elb" {
 }
 
 resource "aws_security_group" "ec2" {
-  name        = "${var.application_name}-ec2"
+  name        = "${local.helloworld_application_name}-ec2"
   vpc_id      = "${aws_vpc.vpc.id}"
   description = "elasticbeanstalk EC2 instances"
 
@@ -62,7 +60,7 @@ resource "aws_security_group" "ec2" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = "${merge(module.tags.tags, map("Name", "${var.application_name}_ec2"))}"
+  tags = "${merge(local.tags, map("Name", "${local.helloworld_application_name}_ec2"))}"
 
   lifecycle {
     create_before_destroy = true
@@ -73,15 +71,15 @@ resource "aws_security_group" "ec2" {
 
 # This resource is shared with multiple environments
 resource "aws_elastic_beanstalk_application" "eb_app" {
-  name        = "${var.application_name}"
+  name        = "${local.helloworld_application_name}"
   description = "Test of beanstalk deployment"
 }
 
 # Stage environment
 
 resource "aws_elastic_beanstalk_environment" "eb_environment" {
-  name = "${var.eb_environment_name}"
-  application = "${var.application_name}"
+  name = "${aws_elastic_beanstalk_application.eb_app.name}"
+  application = "${local.helloworld_application_name}"
   solution_stack_name = "64bit Amazon Linux 2017.09 v2.9.2 running Docker 17.12.0-ce"
 
   # Settings
@@ -131,13 +129,13 @@ resource "aws_elastic_beanstalk_environment" "eb_environment" {
     name      = "SecurityGroups"
     value     = "${aws_security_group.elb.id}"
   }
-  tags        = "${module.tags.tags}"
+  tags        = "${local.tags}"
 }
 
 resource "aws_elastic_beanstalk_application_version" "latest" {
   name        = "latest"
-  application = "${var.application_name}"
-  description = "Version latest of app ${var.application_name}"
+  application = "${aws_elastic_beanstalk_application.eb_app.name}"
+  description = "Version latest of app ${aws_elastic_beanstalk_application.eb_app.name}"
   bucket      = "hmpps-probation-artefacts"
   key         = "Dockerrun.aws.json.zip"
 }
