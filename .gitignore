@@ -60,5 +60,3 @@ hs_err_pid*
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/
-
-vcms/prod/
