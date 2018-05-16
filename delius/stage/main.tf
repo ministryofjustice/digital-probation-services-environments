@@ -1,9 +1,9 @@
-# Main configuration file for delius-new-tech performance environment in AWS
+# Main configuration file for delius-core stage environment in AWS
 
 terraform {
   backend "s3" {
     bucket = "hmpps-probation-terraform"
-    key    = "delius-new-tech.performance.terraform.tfstate"
+    key    = "delius.stage.terraform.tfstate"
     region = "eu-west-2"
   }
   required_version = "~> 0.11"
@@ -15,7 +15,7 @@ provider "aws" {
 }
 
 locals { # Environment
-  environment_name = "delius-new-tech-performance"
+  environment_name = "delius-stage"
 }
 
 # Network
@@ -29,7 +29,7 @@ locals {
 locals {
   tags = {
     owner = "Digital Studio",
-    environment-name = "delius-new-tech-performance",
+    environment-name = "delius-stage",
     application = "nDelius"
     is-production = "false",
     business-unit = "HMPPS",

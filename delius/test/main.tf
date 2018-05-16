@@ -1,9 +1,9 @@
-# Main configuration file for delius-core pre-prod environment in AWS
+# Main configuration file for delius-core test environment in AWS
 
 terraform {
   backend "s3" {
     bucket = "hmpps-probation-terraform"
-    key    = "delius-core.pre-prod.terraform.tfstate"
+    key    = "delius.test.terraform.tfstate"
     region = "eu-west-2"
   }
   required_version = "~> 0.11"
@@ -15,7 +15,7 @@ provider "aws" {
 }
 
 locals { # Environment
-  environment_name = "delius-core-pre-prod"
+  environment_name = "delius.test"
 }
 
 # Network
@@ -29,7 +29,7 @@ locals {
 locals {
   tags = {
     owner = "Digital Studio",
-    environment-name = "delius-core-pre-prod",
+    environment-name = "delius.test",
     application = "nDelius"
     is-production = "false",
     business-unit = "HMPPS",

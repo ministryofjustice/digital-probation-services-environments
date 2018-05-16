@@ -2,8 +2,8 @@
 
 # Elastic beanstalk
 locals {
-  helloworld_application_name = "ndelius-helloworld"
-  helloworld_eb_environment_name = "ndelius-helloworld-stage"
+  helloworld_application_name = "delius-helloworld"
+  helloworld_eb_environment_name = "delius-helloworld-dev"
 }
 
 # Security groups

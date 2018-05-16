@@ -1,9 +1,9 @@
-# Main configuration file for delius-core stage environment in AWS
+# Main configuration file for alfresco test environment in AWS
 
 terraform {
   backend "s3" {
     bucket = "hmpps-probation-terraform"
-    key    = "delius-core.stage.terraform.tfstate"
+    key    = "alfresco.dev.terraform.tfstate"
     region = "eu-west-2"
   }
   required_version = "~> 0.11"
@@ -15,7 +15,7 @@ provider "aws" {
 }
 
 locals { # Environment
-  environment_name = "delius-core-stage"
+  environment_name = "alfresco-dev"
 }
 
 # Network
@@ -29,7 +29,7 @@ locals {
 locals {
   tags = {
     owner = "Digital Studio",
-    environment-name = "delius-core-stage",
+    environment-name = "alfresco-dev",
     application = "nDelius"
     is-production = "false",
     business-unit = "HMPPS",
