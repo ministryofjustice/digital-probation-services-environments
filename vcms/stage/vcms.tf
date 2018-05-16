@@ -16,7 +16,7 @@ locals {
 
 resource "aws_security_group" "elb" {
   name        = "${local.application_name}-elb"
-  vpc_id      = "${aws_vpc.vpc.id}"
+  vpc_id      = "${module.network.vpc_id}"
   description = "ELB"
 
   ingress {
@@ -49,7 +49,7 @@ resource "aws_security_group" "elb" {
 
 resource "aws_security_group" "ec2" {
   name        = "${local.application_name}-ec2"
-  vpc_id      = "${aws_vpc.vpc.id}"
+  vpc_id      = "${module.network.vpc_id}"
   description = "elasticbeanstalk EC2 instances"
 
   ingress {
@@ -75,7 +75,7 @@ resource "aws_security_group" "ec2" {
 
 resource "aws_security_group" "db" {
   name        = "${local.application_name}-db"
-  vpc_id      = "${aws_vpc.vpc.id}"
+  vpc_id      = "${module.network.vpc_id}"
   description = "RDS instances"
 
   ingress {
@@ -112,17 +112,17 @@ resource "aws_elastic_beanstalk_environment" "eb_environment" {
   setting {
     namespace = "aws:ec2:vpc"
     name      = "VPCId"
-    value     = "${aws_vpc.vpc.id}"
+    value     = "${module.network.vpc_id}"
   }
   setting {
     namespace = "aws:ec2:vpc"
     name      = "Subnets"
-    value     = "${join(",", list(aws_subnet.private_a.id, aws_subnet.private_b.id))}"
+    value     = "${join(",", list(module.network.private_subnet_a_id, module.network.private_subnet_b_id))}"
   }
   setting {
     namespace = "aws:ec2:vpc"
     name      = "ELBSubnets"
-    value     = "${join(",", list(aws_subnet.public_a.id, aws_subnet.public_b.id))}"
+    value     = "${join(",", list(module.network.public_subnet_a_id, module.network.public_subnet_b_id))}"
   }
   setting {
     namespace = "aws:ec2:vpc"
@@ -211,7 +211,7 @@ resource "aws_db_instance" "default" {
   username             = "${local.db_root_user_name}"
   password             = "${data.aws_ssm_parameter.mariadb-root-password.value}"
   parameter_group_name = "default.mariadb10.1"
-  db_subnet_group_name = "${aws_db_subnet_group.default.name}"
+  db_subnet_group_name = "${module.network.db_subnet_group_name}"
   vpc_security_group_ids = ["${aws_security_group.db.id}"]
 }
 
