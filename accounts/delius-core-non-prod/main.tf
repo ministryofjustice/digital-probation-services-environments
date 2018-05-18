@@ -33,12 +33,12 @@ locals {
   }
 }
 
-resource "aws_kms_key" "non-prod-master" {
-  description = "${local.master_key_name}"
-  tags       = "${merge(local.tags, map("Name", local.master_key_name))}"
+module "master_key" {
+  source = "../modules/encryption_key"
+  key_name = "master"
+  tags = "${local.tags}"
 }
 
-resource "aws_kms_alias" "non-prod-master" {
-  name          = "alias/${local.master_key_name}"
-  target_key_id = "${aws_kms_key.non-prod-master.key_id}"
+module "admin_role" {
+  source = "../modules/admin_role"
 }
