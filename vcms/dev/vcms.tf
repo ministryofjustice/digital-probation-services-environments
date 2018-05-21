@@ -1,13 +1,13 @@
-# VCMS application in the VCMS stage environment
+# VCMS application in the VCMS dev environment
 
 # Elastic beanstalk
 locals {
-  eb_environment_name = "vcms-stage"
+  eb_environment_name = "vcms-dev"
 }
 
 # Database
 locals {
-  db_name = "vcmsstage"
+  db_name = "vcmsdev"
 }
 
 module "application" {

@@ -3,7 +3,7 @@
 terraform {
   backend "s3" {
     bucket = "hmpps-probation-terraform"
-    key    = "vcms.stage.terraform.tfstate"
+    key    = "vcms.dev.terraform.tfstate"
     region = "eu-west-2"
   }
   required_version = "~> 0.11"
@@ -13,12 +13,12 @@ provider "aws" {
   region  = "eu-west-2"
   version = "~> 1.16"
   assume_role {
-    role_arn = "arn:aws:iam::895523100917:role/terraform"
+    role_arn = "arn:aws:iam::356676313489:role/terraform"
   }
 }
 
 locals { # Environment
-  environment_name = "vcms-stage"
+  environment_name = "vcms-dev"
 }
 
 # Network
@@ -32,7 +32,7 @@ locals {
 locals {
   tags = {
     owner = "Digital Studio",
-    environment-name = "vcms-stage",
+    environment-name = "vcms-dev",
     application = "VCMS"
     is-production = "false",
     business-unit = "HMPPS",
