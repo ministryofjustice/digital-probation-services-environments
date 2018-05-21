@@ -1,6 +1,6 @@
 resource "aws_iam_role" "admin" {
   name               = "admin"
-  description        = "Full adnmin permissions"
+  description        = "Full admin permissions"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
